@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 //   if (!avtar) {
 //     throw new ApiError(400, "Avtar file is required");
-  }
+//   }
 });
 
 export { registerUser };
