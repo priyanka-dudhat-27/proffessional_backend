@@ -1,1 +1,1 @@
-export const DB_NAME="probackend"
+export const DB_NAME = "probackend";
