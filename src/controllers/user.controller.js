@@ -1,6 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/userModel.js";
+import {uploadOnCloudinary} from "../utils/cloud inary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   //get user details from frontend
@@ -34,12 +36,41 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exist");
   }
 
-//   const avtarLocalPath = req.files?.avtart[0]?.path;
-//   const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  const avtarLocalPath = req.files?.avtart[0]?.path;
+  const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
-//   if (!avtar) {
-//     throw new ApiError(400, "Avtar file is required");
-//   }
-});
+  if (!avtarLocalPath) {
+    throw new ApiError(400, "Avtar file is required");
+  }
+  
+  const avtar=await uploadOnCloudinary(avtarLocalPath)
+  const coverImage=await uploadOnCloudinary(coverImageLocalPath)
 
-export { registerUser };
+  if(!avtar){
+    throw new ApiError(400, "Avtar file is required");
+  }
+
+  const user=await User.create({
+    fullname,
+    avtar:avtar.url,
+    coverImage:coverImage?.url ||"",
+    email,
+    password,
+    username:username.toLowerCase()   
+  })
+
+  const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  )
+
+  if(!createdUser){
+    throw new ApiError(500,"Something went wriong while register the user")
+  }
+
+  return res.status(201).json(
+    new ApiResponse(200,createdUser,"User registered successfully")
+  )
+ 
+})
+
+export { registerUser }
