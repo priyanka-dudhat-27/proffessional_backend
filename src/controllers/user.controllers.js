@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 
 const generateAccessAndRefreshToken=async(userId)=>{
@@ -193,7 +193,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
    try {
      const decodedToken=jwt.verify(
        incomingRefreshToken,
-       process.env.REFRESH_ACCESS_SECRET
+       process.env.REFRESH_TOKEN_SECRET
      )
  
      const user=await User.findById(decodedToken?._id)
@@ -215,14 +215,13 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
  
      return res.status(200)
      .cookie("accessToken",accessToken)
-     .cookie("refreshToken",refreshToken)
+     .cookie("refreshToken",newRefreshToken)
      .json(
        200,
-       {accessToken,refreshToken:newRefreshToken},
-       "Access Token Refreshed"
+       {accessToken,refreshToken:newRefreshToken,message:"Access Token Refreshed"},
      )
    } catch (error) {
-      throw new apiError(401,error?.message || "Invalid Refresh Token")
+      throw new ApiError(401,error?.message || "Invalid Refresh Token")
    }
 
   })
