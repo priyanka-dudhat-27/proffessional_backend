@@ -191,9 +191,9 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
     }
 
    try {
-     const decodedToken=jwt.veryfy(
+     const decodedToken=jwt.verify(
        incomingRefreshToken,
-       process.env.REFRESH_ACCESS_TOKEN
+       process.env.REFRESH_ACCESS_SECRET
      )
  
      const user=await User.findById(decodedToken?._id)
@@ -224,7 +224,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
    } catch (error) {
       throw new apiError(401,error?.message || "Invalid Refresh Token")
    }
-   
+
   })
 
 
