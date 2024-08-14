@@ -253,7 +253,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
     const getCurrentUser=asyncHandler(async(req,res)=>{
       return res
       .status(200)
-      .json(200,req.user,"Current user fetched successfully")
+      .json(new ApiResponse(200,req.user,"Current user fetched successfully"))
     })
 
     //update account details
@@ -286,6 +286,8 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
       throw new ApiError(400,"Avtar file is missing")
     }
 
+    //set previoue image delet utilites .......todo task 
+
     const avtar=await uploadOnCloudinary(avtarLocalPath)
 
     if(!avtar.url){
@@ -310,6 +312,9 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
     if(!coverImageLocalPath){
       throw new ApiError(400,"Avtar file is missing")
     }
+
+        //set previoue image delet utilites .......todo task
+
 
     const coverImage=await uploadOnCloudinary(coverImageLocalPath)
 
