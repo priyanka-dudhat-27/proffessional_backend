@@ -343,11 +343,13 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
       }
 
       const channel=await User.aggregate([
+        //match uservname pipeline
         {
           $match:{
             username:username?.toLowercase()
           }
         },
+        //values of subscribers
         {
           $lookup:{
             from:"subscriptions",
@@ -356,6 +358,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
             as:"subscribers"
           }
         },
+        //value of subscribed channel
         {
           $lookup:{
             from:"subscriptions",
@@ -364,6 +367,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
             as:"subscribedTo"
           }
         },
+        //add fields in single object
         {
           $addFields:{
             subscribersCount:{
@@ -381,6 +385,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
             }
           }
         },
+        //which fields value want tojoin
         {
           $project:{
             fullname:1,
@@ -390,8 +395,7 @@ const refreshAccessToken =asyncHandler(async(req,res)=>{
             isSubscribed:1,
             avtar:1,
             coverImage:1,
-            email:1
-             
+            email:1  
           }
         }
       ])
